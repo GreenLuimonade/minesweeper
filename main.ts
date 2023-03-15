@@ -1,16 +1,15 @@
 input.onPinTouchEvent(TouchPin.P1, input.buttonEventDown(), function () {
-    if (!loose) {
+    if (!loose && !win) {
         led.toggle(X, Y)
         Y += 1
         if (Y == 5) {
             Y = 0
         }
         led.toggle(X, Y)
-        detect()
     }
 })
 input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
-    if (!loose) {
+    if (!loose && !win) {
         count = 0
         for (let i = 0; i <= 4; i++) {
             Xi = XList[i]
@@ -20,13 +19,15 @@ input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
             }
         }
         if (conincidence) {
+            Xex.length = 0
+            Yex.length = 0
             loose = true
             basic.showLeds(`
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
+            # # # # #
+            # # # # #
+            # # # # #
+            # # # # #
+            # # # # #
             `)
             basic.showIcon(IconNames.No)
             pause(2000)
@@ -57,9 +58,11 @@ input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
                 }
             }
             Color()
+            
             Xex.push(X)
             Yex.push(Y)
             det.push(count)
+            
         }
     }
 })
@@ -84,36 +87,36 @@ function Color () {
     }
 }
 input.onPinTouchEvent(TouchPin.P0, input.buttonEventDown(), function () {
-    if (!loose) {
+    if (!loose && !win) {
         led.toggle(X, Y)
         X += -1
         if (X == -1) {
             X = 4
         }
         led.toggle(X, Y)
-        detect()
+
     }
 })
 input.onPinTouchEvent(TouchPin.P2, input.buttonEventDown(), function () {
-    if (!loose) {
+    if (!loose && !win) {
         led.toggle(X, Y)
         Y += -1
         if (Y == -1) {
             Y = 4
         }
         led.toggle(X, Y)
-        detect()
+
     }
 })
 input.onPinTouchEvent(TouchPin.P3, input.buttonEventDown(), function () {
-    if (!loose) {
+    if (!loose && !win) {
         led.toggle(X, Y)
         X += 1
         if (X == 5) {
             X = 0
         }
         led.toggle(X, Y)
-        detect()
+
     }
 })
 let loose = false
@@ -130,6 +133,10 @@ let YList: number[] = []
 let XList: number[] = []
 let X = 0
 let Y = 0
+let blank = 0
+let win = false
+Xex.length = 0
+Yex.length = 0
 for (let index = 0; index <= 4; index++) {
     Y = randint(0, 4)
     X = randint(0, 4)
@@ -139,7 +146,9 @@ for (let index = 0; index <= 4; index++) {
     }
     XList.push(X)
     YList.push(Y)
+    led.plot(X,Y)
 }
+pause(3000)
 X = 0
 Y = 0
 basic.showLeds(`
@@ -157,10 +166,38 @@ function detect() {
         if (X == Xo && Y == Yo) {
             count = det[f]
             Color()
-            led.plot(X,Y)
+            led.plot(X, Y)
         }
         else {
             led.unplot(Xo, Yo)
         }
     }
 }
+basic.forever(function () {
+    if (win) {
+        Xex.length = 0
+        Yex.length = 0
+        basic.showLeds(`
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
+        basic.showIcon(IconNames.Yes)
+        basic.showLeds(`
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
+        for (let j = 0; j <= 4; j++) {
+            Xi = XList[j]
+            Yi = YList[j]
+            led.plot(Xi, Yi)
+        }
+        win = false
+    }
+    detect()
+})
