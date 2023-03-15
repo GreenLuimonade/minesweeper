@@ -28,6 +28,15 @@ input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
             . . . . .
             . . . . .
             `)
+            basic.showIcon(IconNames.No)
+            pause(2000)
+            basic.showLeds(`
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
             for (let j = 0; j <= 4; j++) {
                 Xi = XList[j]
                 Yi = YList[j]
